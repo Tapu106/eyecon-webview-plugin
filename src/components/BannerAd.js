@@ -1,13 +1,6 @@
 import { useEffect } from "react";
-
+import { Helmet } from "react-helmet";
 const BannerAd = () => {
-  useEffect(() => {
-    const avScript = document.createElement("script");
-    avScript.src =
-      "https://s3.amazonaws.com/embed.footylight.com/aniview/footylight-101greatgoals-mobile.js";
-    avScript.async = true;
-    document.head.appendChild(avScript);
-  }, []);
   return (
     <div
       style={{
@@ -19,6 +12,12 @@ const BannerAd = () => {
         backgroundColor: "rgb(12, 20, 36)",
       }}
     >
+      <Helmet>
+        <script
+          src="https://s3.amazonaws.com/embed.footylight.com/aniview/footylight-101greatgoals-mobile.js"
+          async
+        ></script>
+      </Helmet>
       <div id="footylight_contextual_player_sticky"></div>
     </div>
   );
