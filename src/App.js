@@ -8,7 +8,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" exact element={<NativeContent />}></Route>
+        <Route path="/eyecon" exact element={<NativeContent />}></Route>
         <Route path="/bannerad" exact element={<BannerAd />}></Route>
       </Routes>
     </BrowserRouter>
