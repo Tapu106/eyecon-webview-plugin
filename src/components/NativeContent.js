@@ -3,13 +3,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useWindowHeight } from "@react-hook/window-size";
 import Carousel from "react-bootstrap/Carousel";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const NativeContent = () => {
+  const history = useNavigate();
+  const location = useLocation();
   const [aniviewLoading, setAniviewLoading] = useState(true);
   const [videoData, setVideoData] = useState([]);
-//   const [deviceHeight, setDeviceHeight] = useState("100%");
+  const [activeIndex, setActiveIndex] = useState(0);
   const onlyHeight = useWindowHeight();
-//   const onlyWidth = useWindowWidth();
 
   useEffect(() => {
     console.log("height", onlyHeight);
@@ -28,6 +30,14 @@ const NativeContent = () => {
         console.log(response.data);
         setVideoData(translatedResult);
         setAniviewLoading(false);
+
+        const newSearch = new URLSearchParams(location.search);
+        console.log(videoData);
+        newSearch.set("id", translatedResult[0].content_id);
+        history({
+          pathname: location.pathname,
+          search: newSearch.toString(),
+        });
       } catch (error) {
         setVideoData([]);
       }
@@ -36,6 +46,20 @@ const NativeContent = () => {
     return () => clearTimeout(scriptTimeout);
   }, []);
 
+  useEffect(() => {}, []);
+  const handleSlide = (selectedIndex) => {
+    // Perform any additional actions or logic based on the slide change event
+    setActiveIndex(selectedIndex);
+    const video = videoData[selectedIndex];
+    console.log("present video", video.content_id);
+    const newSearch = new URLSearchParams(location.search);
+    newSearch.set("id", video.content_id);
+
+    history({
+      pathname: location.pathname,
+      search: newSearch.toString(),
+    });
+  };
   return (
     <div
       style={{
@@ -55,6 +79,8 @@ const NativeContent = () => {
       </Helmet>
       {!aniviewLoading && videoData.length > 0 ? (
         <Carousel
+          activeIndex={activeIndex}
+          onSelect={handleSlide}
           style={{
             display: "flex",
             width: "0",
@@ -94,68 +120,6 @@ const NativeContent = () => {
                   {video.title}
                 </p>
               </Carousel.Caption>
-              {/* <a href="#" target="_blank" key={id}>
-                  <div
-                    id="yt-thumb"
-                    style={{
-                      position: "relative",
-                      width: "320px",
-                      height: "200px",
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      margin: "10px",
-                      marginLeft: "0px",
-                      background: `url(${video.thumbnail})`,
-                      backgroundSize: "cover",
-                      backgroundPositionX: "center",
-                      backgroundPositionY: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "0px",
-                        height: "100px",
-                        width: "100%",
-                        background:
-                          "linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
-                      }}
-                    ></div>
-                    <img
-                      src="https://www.ramiksadana.com/images/play.png"
-                      alt="play"
-                      style={{
-                        position: "absolute",
-                        width: "100px",
-                        height: "100px",
-                        left: "110px",
-                        top: "30px",
-                        margin: "0!important",
-                      }}
-                    />
-  
-                    <div id={video.source} style={{ visibility: "hidden" }}>
-                      ${video.source}
-                    </div>
-                    <div id={{ id }} style={{ visibility: "hidden" }}>
-                      ${video.creator}
-                    </div>
-                    <p
-                      id={id}
-                      style={{
-                        position: "absolute",
-                        bottom: "0px",
-                        color: "white",
-                        margin: "0px 10px",
-                        marginBottom: "15px",
-                        fontFamily: "sans-serif",
-                        fontSize: "13px",
-                      }}
-                    >
-                      {video.title}
-                    </p>
-                  </div>
-                </a> */}
             </Carousel.Item>
           ))}
         </Carousel>
